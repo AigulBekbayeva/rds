@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <style>
+        /* Добавляем CSS для фоновой картинки */
+        body {
+            background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
+            background-size: cover; /* Масштабируем изображение, чтобы оно покрыло весь экран */
+            background-position: center; /* Центрируем изображение */
+            background-repeat: no-repeat; /* Изображение не повторяется */
+            height: 100vh; /* Высота страницы на весь экран */
+            margin: 0; /* Убираем отступы */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Стили для формы */
+        form {
+            background-color: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон для формы */
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        /* Стили для полей формы */
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Кнопка отправки */
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Платформа учета лесных пожаров РК</h1>
+	
+    
+    <form method="POST" action="{{ url_for('login') }}">
+        {{ form.hidden_tag() }}  
+
+        
+        <div>
+			<label for="username">Логин</label>  
+            {{ form.username(autocomplete="username") }}
+            {% if form.username.errors %}
+                <ul>
+                    {% for error in form.username.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        
+        <div>
+            <label for="password">Пароль</label>
+            {{ form.password(autocomplete="current-password") }}
+            {% if form.password.errors %}
+                <ul>
+                    {% for error in form.password.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        
+        <div>
+            <input type="submit" value="Войти">
+        </div>
+    </form>
+
+    
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+</body>
+</html>

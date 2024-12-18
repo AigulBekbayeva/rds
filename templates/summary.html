@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сводная информация по регионам</title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/forest.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Сводная информация по регионам</h1>
+    {% include 'navbar.html' %}
+    
+    <!-- Форма для фильтрации по датам -->
+    <form method="GET" action="{{ url_for('summary') }}">
+        <label for="start_date">Дата начала:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}">
+        
+        <label for="end_date">Дата окончания:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date }}">
+        
+        <button type="submit">Применить фильтр</button>
+    </form>
+
+    <table id="summary-table" border="1">
+		<thead>
+			<tr>
+				<th>Регион</th>
+				<th>Количество пожаров</th>
+				<th>Общая площадь пожаров</th>
+				<th>Общий ущерб пожаров</th>
+				<th>Общее количество людей</th>
+				<th>Общее количество техники</th>
+				<th>Общее количество воздушных судов</th>
+				<th>АПС: Количество людей</th>
+				<th>АПС: Количество техники</th>
+				<th>АПС: Количество воздушных судов</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in summary_data %}
+			<tr>
+				<td>{{ row.region }}</td>
+				<td>{{ row.fire_count }}</td>
+				<td>{{ row.total_damage_area or 0 }}</td>
+				<td>{{ row.total_damage_tenge or 0 }}</td>
+				<td>{{ row.total_people or 0 }}</td>
+				<td>{{ row.total_technics or 0 }}</td>
+				<td>{{ row.total_aircraft or 0 }}</td>
+				<td>{{ row.total_APS_people or 0 }}</td>
+				<td>{{ row.total_APS_technics or 0 }}</td>
+				<td>{{ row.total_APS_aircraft or 0 }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td><strong>Итого</strong></td>
+				<td>{{ totals.fire_count }}</td>
+				<td>{{ totals.damage_area }}</td>
+				<td>{{ totals.damage_tenge }}</td>
+				<td>{{ totals.people }}</td>
+				<td>{{ totals.technics }}</td>
+				<td>{{ totals.aircraft }}</td>
+				<td>{{ totals.APS_people }}</td>
+				<td>{{ totals.APS_technics }}</td>
+				<td>{{ totals.APS_aircraft }}</td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#summary-table').DataTable({
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                language: {
+					search: "Поиск:",
+					lengthMenu: "Показать _MENU_ записей",
+					info: "Показано с _START_ по _END_ из _TOTAL_ записей",
+					infoEmpty: "Нет доступных записей",
+					infoFiltered: "(отфильтровано из _MAX_ записей)",
+					zeroRecords: "Записи не найдены",
+					paginate: {
+						first: "Первый",
+						last: "Последний",
+						next: "Следующий",
+						previous: "Предыдущий"
+					},
+				}
+            });
+        });
+    </script>
+    <a href="{{ url_for('admin_dashboard') }}">Вернуться на главную</a>
+</body>
+</html>
